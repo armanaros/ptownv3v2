@@ -1,22 +1,23 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, memoryLocalCache } from 'firebase/firestore';
 import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import firebaseConfig from '@/config/firebase.config';
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+
+// Use persistent cache with multi-tab support; fall back to memory cache on
+// browsers that block IndexedDB (Safari private mode, iOS restrictions, etc.)
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+  });
+} catch {
+  db = initializeFirestore(app, { localCache: memoryLocalCache() });
+}
+export { db };
+
 export const auth = getAuth(app);
-
-enableIndexedDbPersistence(db).catch((err) => {
-  if (err.code === 'failed-precondition') {
-    console.warn('Firestore persistence unavailable: multiple tabs open');
-  } else if (err.code === 'unimplemented') {
-    console.warn('Firestore persistence not supported in this browser');
-  }
-});
-
-setPersistence(auth, browserLocalPersistence).catch((err) => {
-  console.warn('Auth persistence warning:', err?.message);
-});
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 
 export default app;
