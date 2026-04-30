@@ -38,8 +38,15 @@ export const setStoreStatus = async (isOpen, closedMessage = '', restaurantId = 
 };
 
 export const subscribeToStoreStatus = (callback) => {
-  return onSnapshot(storeStatusRef, (snap) => {
-    if (snap.exists()) callback(snap.data());
-    else callback({ isOpen: true, closedMessage: '' });
-  });
+  return onSnapshot(
+    storeStatusRef,
+    (snap) => {
+      if (snap.exists()) callback(snap.data());
+      else callback({ isOpen: true, closedMessage: '' });
+    },
+    (err) => {
+      console.error('subscribeToStoreStatus error:', err);
+      callback({ isOpen: true, closedMessage: '' });
+    }
+  );
 };

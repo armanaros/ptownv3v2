@@ -200,19 +200,24 @@ export default function OnlineOrderPage() {
 
   useEffect(() => {
     const load = async () => {
-      const [menuData, couponData] = await Promise.all([getFullMenu(), getCoupons()]);
-      const available = menuData
-        .filter((c) => c.isActive !== false)
-        .map((c) => ({
-          ...c,
-          items: c.items.filter(
-            (i) => i.isAvailable && i.isActive !== false && i.availableOnline !== false
-          ),
-        }))
-        .filter((c) => c.items.length > 0);
-      setMenu(available);
-      setCoupons(couponData);
-      setLoading(false);
+      try {
+        const [menuData, couponData] = await Promise.all([getFullMenu(), getCoupons()]);
+        const available = menuData
+          .filter((c) => c.isActive !== false)
+          .map((c) => ({
+            ...c,
+            items: c.items.filter(
+              (i) => i.isAvailable && i.isActive !== false && i.availableOnline !== false
+            ),
+          }))
+          .filter((c) => c.items.length > 0);
+        setMenu(available);
+        setCoupons(couponData);
+      } catch (err) {
+        console.error('Failed to load menu:', err);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, []);
