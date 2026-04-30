@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete, Restaurant, Public, PointOfSale } from '@mui/icons-material';
 import toast from 'react-hot-toast';
+import { demoBlock } from '@/utils/demoGuard';
 import MenuItemForm from './MenuItemForm';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import EmptyState from '@/components/common/EmptyState';
@@ -44,6 +45,7 @@ const MenuItemList = ({ items, categories, selectedCategoryId }) => {
   };
 
   const handleDelete = async () => {
+    if (demoBlock()) { setDeleteTarget(null); return; }
     await deleteItem(deleteTarget.id);
     toast.success('Item deleted');
     setDeleteTarget(null);

@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { Campaign, Send, Person, Delete } from '@mui/icons-material';
 import toast from 'react-hot-toast';
+import { demoBlock } from '@/utils/demoGuard';
 import { createAnnouncement, deleteAnnouncement, subscribeToAnnouncements } from '@/services/announcement.service';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import useAuth from '@/hooks/useAuth';
@@ -45,6 +46,7 @@ export default function AnnouncementsTab() {
   };
 
   const handleDelete = async () => {
+    if (demoBlock()) { setDeleteTarget(null); return; }
     try {
       await deleteAnnouncement(deleteTarget.id);
       toast.success('Announcement deleted');

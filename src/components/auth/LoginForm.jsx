@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { Box, Card, CardContent, TextField, Button, Typography, Alert, InputAdornment, IconButton, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { Person, Lock, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Box, Card, CardContent, TextField, Button, Typography, Alert, InputAdornment, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Divider, Chip, Stack } from '@mui/material';
+import { Person, Lock, Visibility, VisibilityOff, AdminPanelSettings, ManageAccounts, Badge } from '@mui/icons-material';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/firebase';
+
+const IS_DEMO = import.meta.env.VITE_DEMO_MODE === 'true';
+
+const DEMO_ACCOUNTS = [
+  { label: 'Admin', username: 'demo_admin', password: 'Demo@2026', icon: <AdminPanelSettings fontSize="small" />, color: 'error' },
+  { label: 'Manager', username: 'demo_manager', password: 'Demo@2026', icon: <ManageAccounts fontSize="small" />, color: 'warning' },
+  { label: 'Cashier', username: 'demo_cashier', password: 'Demo@2026', icon: <Badge fontSize="small" />, color: 'info' },
+];
 
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -109,6 +117,36 @@ const LoginForm = ({ onLogin }) => {
             </Button>
           </Box>
         </Box>
+
+        {IS_DEMO && (
+          <>
+            <Divider sx={{ mt: 3, mb: 2 }}>
+              <Chip label="DEMO — Quick Login" size="small" color="warning" />
+            </Divider>
+            <Stack spacing={1}>
+              {DEMO_ACCOUNTS.map((acc) => (
+                <Button
+                  key={acc.label}
+                  variant="outlined"
+                  color={acc.color}
+                  startIcon={acc.icon}
+                  fullWidth
+                  size="small"
+                  onClick={() => { setUsername(acc.username); setPassword(acc.password); }}
+                  sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                    <span>{acc.label}</span>
+                    <Typography variant="caption" color="text.secondary">{acc.username}</Typography>
+                  </Box>
+                </Button>
+              ))}
+            </Stack>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1.5 }}>
+              Click a role to pre-fill credentials, then press Sign In
+            </Typography>
+          </>
+        )}
       </CardContent>
 
       <Dialog open={resetOpen} onClose={handleResetClose} maxWidth="xs" fullWidth>

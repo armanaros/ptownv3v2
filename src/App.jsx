@@ -11,6 +11,9 @@ import { NotificationProvider } from '@/contexts/NotificationContext';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import DemoTour from '@/components/common/DemoTour';
+
+const IS_DEMO = import.meta.env.VITE_DEMO_MODE === 'true';
 
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
@@ -68,6 +71,7 @@ function App() {
             <AuthProvider>
               <NotificationProvider>
                 <AppRoutes />
+                {IS_DEMO && <DemoTour />}
               </NotificationProvider>
             </AuthProvider>
             <Toaster

@@ -8,6 +8,7 @@ import {
 import { Add, Delete, LocalAtm, Edit } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import toast from 'react-hot-toast';
+import { demoBlock } from '@/utils/demoGuard';
 import { addExpense, updateExpense, getExpensesByDateRange, deleteExpense } from '@/services/expense.service';
 import { getManilaDayRange } from '@/utils/dateHelpers';
 import { formatCurrency } from '@/utils/formatters';
@@ -84,6 +85,7 @@ export default function ExpensesTab({ onUpdate }) {
   };
 
   const handleDelete = async (id) => {
+    if (demoBlock()) return;
     try {
       await deleteExpense(id);
       toast.success('Expense deleted');

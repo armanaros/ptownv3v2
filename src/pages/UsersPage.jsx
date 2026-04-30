@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete, Search, Block, CheckCircle, Phone } from '@mui/icons-material';
 import toast from 'react-hot-toast';
+import { demoBlock } from '@/utils/demoGuard';
 import AppLayout from '@/components/layout/AppLayout';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
@@ -114,6 +115,7 @@ export default function UsersPage() {
 
   // ── Delete ───────────────────────────────────────────────────────────────────
   const handleDelete = async () => {
+    if (demoBlock()) { setDeleteTarget(null); return; }
     try {
       await deleteUser(deleteTarget.id);
       toast.success('User deleted');

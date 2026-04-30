@@ -30,9 +30,12 @@ import {
   Campaign,
   Info,
   Close,
+  Science,
 } from '@mui/icons-material';
 import useAuth from '@/hooks/useAuth';
 import { useNotifications } from '@/contexts/NotificationContext';
+
+const IS_DEMO = import.meta.env.VITE_DEMO_MODE === 'true';
 
 const pageTitles = {
   '/dashboard': 'Dashboard',
@@ -109,6 +112,15 @@ const TopBar = ({ drawerWidth, onMenuClick }) => {
             <Typography variant="h5" noWrap sx={{ fontWeight: 600 }}>
               {pageTitle}
             </Typography>
+            {IS_DEMO && (
+              <Chip
+                icon={<Science sx={{ fontSize: '14px !important' }} />}
+                label="DEMO MODE"
+                size="small"
+                color="warning"
+                sx={{ fontWeight: 700, fontSize: '0.7rem', height: 22 }}
+              />
+            )}
           </Box>
 
           {/* Right side */}

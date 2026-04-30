@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import toast from 'react-hot-toast';
+import { demoBlock } from '@/utils/demoGuard';
 import CategoryForm from './CategoryForm';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { createCategory, updateCategory, deleteCategory } from '@/services/menu.service';
@@ -33,6 +34,7 @@ const CategoryList = ({ categories, selectedId, onSelect }) => {
   };
 
   const handleDelete = async () => {
+    if (demoBlock()) { setDeleteTarget(null); return; }
     try {
       await deleteCategory(deleteTarget.id);
       toast.success('Category deleted');

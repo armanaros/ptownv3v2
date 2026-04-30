@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete, LocalOffer, ContentCopy } from '@mui/icons-material';
 import toast from 'react-hot-toast';
+import { demoBlock } from '@/utils/demoGuard';
 import { subscribeToCoupons, addCoupon, updateCoupon, deleteCoupon } from '@/services/coupon.service';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { formatCurrency } from '@/utils/formatters';
@@ -56,6 +57,7 @@ export default function CouponsTab() {
   };
 
   const handleDelete = async () => {
+    if (demoBlock()) { setDeleteTarget(null); return; }
     try { await deleteCoupon(deleteTarget.id); toast.success('Coupon deleted'); }
     catch { toast.error('Failed to delete coupon'); }
     finally { setDeleteTarget(null); }
