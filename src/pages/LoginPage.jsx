@@ -16,7 +16,7 @@ const LoginPage = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #B85C38 0%, #8E4529 100%)',
+      background: 'linear-gradient(135deg, #16A34A 0%, #052E16 100%)',
       p: 2,
     }}>
       <LoginForm onLogin={login} />

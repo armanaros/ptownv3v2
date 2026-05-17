@@ -71,11 +71,13 @@ const LoginForm = ({ onLogin }) => {
         <Box sx={{ textAlign: 'center', mb: 3 }}>
           <Box
             component="img"
-            src="/logo.png"
-            alt="P-Town"
-            sx={{ width: 180, height: 'auto', mb: 1 }}
+            src="/logo.jpg"
+            alt="Therapevo TIPDMS"
+            sx={{ height: 80, width: 'auto', maxWidth: 200, mb: 1.5 }}
           />
-          <Typography variant="body2" color="text.secondary">System Management</Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.4 }}>
+            Therapevo Integrated Pharmaceutical<br />Distribution Management System
+          </Typography>
         </Box>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}

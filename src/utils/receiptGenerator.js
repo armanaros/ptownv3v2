@@ -35,9 +35,9 @@ export const generateReceiptHTML = (order) => {
   return `
     <div style="font-family:monospace;font-size:12px;width:280px;padding:10px">
       <div style="text-align:center;margin-bottom:8px">
-        <strong style="font-size:16px">P-TOWN</strong><br/>
-        <span style="font-size:10px">ALMUSALAN ATBP.</span><br/>
-        <span style="font-size:10px">Restaurant POS Receipt</span>
+        <strong style="font-size:14px">THERAPEVO FARMACO</strong><br/>
+        <span style="font-size:10px">Pharma and Medical Supplies Trading</span><br/>
+        <span style="font-size:10px">Official Sales Receipt</span>
       </div>
       <hr style="border:none;border-top:1px dashed #000"/>
       <div style="margin:4px 0">

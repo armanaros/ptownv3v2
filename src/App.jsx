@@ -11,48 +11,46 @@ import { NotificationProvider } from '@/contexts/NotificationContext';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import DemoTour from '@/components/common/DemoTour';
 
-const IS_DEMO = import.meta.env.VITE_DEMO_MODE === 'true';
-
-const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
-const POSPage = lazy(() => import('@/pages/POSPage'));
-const OrdersPage = lazy(() => import('@/pages/OrdersPage'));
-const MenuPage = lazy(() => import('@/pages/MenuPage'));
-const EmployeesPage = lazy(() => import('@/pages/EmployeesPage'));
-const UsersPage = lazy(() => import('@/pages/UsersPage'));
-
-const DeliveriesPage = lazy(() => import('@/pages/DeliveriesPage'));
-const ReportsPage = lazy(() => import('@/pages/ReportsPage'));
-const OperationsPage = lazy(() => import('@/pages/OperationsPage'));
-const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
-const OnlineOrderPage = lazy(() => import('@/pages/OnlineOrderPage'));
-const OrderTrackPage = lazy(() => import('@/pages/OrderTrackPage'));
-const SetupPage = lazy(() => import('@/pages/SetupPage'));
+const LoginPage               = lazy(() => import('@/pages/LoginPage'));
+const SetupPage               = lazy(() => import('@/pages/SetupPage'));
+const DashboardPage           = lazy(() => import('@/pages/DashboardPage'));
+const POSPage                 = lazy(() => import('@/pages/POSPage'));
+const SalesPage               = lazy(() => import('@/pages/SalesPage'));
+const ProductsPage            = lazy(() => import('@/pages/ProductsPage'));
+const InventoryPage           = lazy(() => import('@/pages/InventoryPage'));
+const AccountsReceivablePage  = lazy(() => import('@/pages/AccountsReceivablePage'));
+const MedicalRepsPage         = lazy(() => import('@/pages/MedicalRepsPage'));
+const LogisticsPage           = lazy(() => import('@/pages/LogisticsPage'));
+const ExpensesPage            = lazy(() => import('@/pages/ExpensesPage'));
+const ReportsPage             = lazy(() => import('@/pages/ReportsPage'));
+const UsersPage               = lazy(() => import('@/pages/UsersPage'));
+const OperationsPage          = lazy(() => import('@/pages/OperationsPage'));
+const ProfilePage             = lazy(() => import('@/pages/ProfilePage'));
+const SettingsPage            = lazy(() => import('@/pages/SettingsPage'));
 
 const AppRoutes = () => (
   <Suspense fallback={<LoadingSpinner fullscreen />}>
     <Routes>
       {/* Public routes */}
       <Route path="/setup" element={<SetupPage />} />
-      <Route path="/onlineorders" element={<OnlineOrderPage />} />
-      <Route path="/order" element={<OrderTrackPage />} />
-      <Route path="/order/:id" element={<OrderTrackPage />} />
       <Route path="/login" element={<LoginPage />} />
 
       {/* Protected routes */}
-      <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-      <Route path="/pos" element={<ProtectedRoute><POSPage /></ProtectedRoute>} />
-      <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-      <Route path="/menu" element={<ProtectedRoute><MenuPage /></ProtectedRoute>} />
-      <Route path="/employees" element={<ProtectedRoute><EmployeesPage /></ProtectedRoute>} />
-      <Route path="/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
-
-      <Route path="/deliveries" element={<ProtectedRoute><DeliveriesPage /></ProtectedRoute>} />
-      <Route path="/operations" element={<ProtectedRoute><OperationsPage /></ProtectedRoute>} />
-      <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
-      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/dashboard"           element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+      <Route path="/pos"                 element={<ProtectedRoute><POSPage /></ProtectedRoute>} />
+      <Route path="/sales"               element={<ProtectedRoute><SalesPage /></ProtectedRoute>} />
+      <Route path="/products"            element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
+      <Route path="/inventory"           element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
+      <Route path="/accounts-receivable" element={<ProtectedRoute><AccountsReceivablePage /></ProtectedRoute>} />
+      <Route path="/medical-reps"        element={<ProtectedRoute><MedicalRepsPage /></ProtectedRoute>} />
+      <Route path="/logistics"           element={<ProtectedRoute><LogisticsPage /></ProtectedRoute>} />
+      <Route path="/expenses"            element={<ProtectedRoute><ExpensesPage /></ProtectedRoute>} />
+      <Route path="/reports"             element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
+      <Route path="/users"               element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
+      <Route path="/operations"          element={<ProtectedRoute><OperationsPage /></ProtectedRoute>} />
+      <Route path="/profile"             element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/settings"            element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
 
       {/* Fallback */}
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -71,7 +69,6 @@ function App() {
             <AuthProvider>
               <NotificationProvider>
                 <AppRoutes />
-                {IS_DEMO && <DemoTour />}
               </NotificationProvider>
             </AuthProvider>
             <Toaster

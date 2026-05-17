@@ -29,7 +29,7 @@ export const getUserByUsername = async (username) => {
 
 export const createUser = async (userData) => {
   const { username, email, password, firstName, lastName, role, phone } = userData;
-  const emailToUse = email || `${username.trim().toLowerCase()}@ptown.local`;
+  const emailToUse = email || `${username.trim().toLowerCase()}@therapevo.local`;
 
   // Use a secondary app so we don't sign out the current admin
   const secondaryApp = initializeApp(firebaseConfig, 'secondary');

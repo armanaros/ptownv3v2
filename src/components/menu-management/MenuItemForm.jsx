@@ -38,6 +38,7 @@ const MenuItemForm = ({ open, onClose, onSave, item = null, categories = [] }) =
     availableOnPOS: true,
   });
   const [saving, setSaving] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     if (item) {
@@ -121,11 +122,17 @@ const MenuItemForm = ({ open, onClose, onSave, item = null, categories = [] }) =
           <Stack spacing={2} sx={{ mt: 1 }}>
             {/* Image URL */}
             <TextField
-              label="Image URL"
+              label="Photo URL"
               value={form.imageUrl}
-              onChange={handleChange('imageUrl')}
+              onChange={(e) => { setImgError(false); handleChange('imageUrl')(e); }}
               fullWidth
-              placeholder="https://..."
+              placeholder="Paste a direct image link here"
+              helperText={
+                imgError
+                  ? '⚠ Link didn\'t load — in Google Images, right-click the image → "Open image in new tab", then copy that URL'
+                  : 'Tip: in Google Images, right-click the photo → "Open image in new tab" → copy the URL from the address bar'
+              }
+              error={imgError}
             />
             {form.imageUrl.trim() && (
               <Box
@@ -134,13 +141,14 @@ const MenuItemForm = ({ open, onClose, onSave, item = null, categories = [] }) =
                 alt="Preview"
                 sx={{
                   width: '100%',
-                  maxHeight: 180,
+                  maxHeight: 200,
                   objectFit: 'cover',
                   borderRadius: 1,
-                  display: 'block',
+                  border: '1px solid',
+                  borderColor: imgError ? 'error.main' : 'divider',
                 }}
-                onError={(e) => { e.target.style.display = 'none'; }}
-                onLoad={(e) => { e.target.style.display = 'block'; }}
+                onError={() => setImgError(true)}
+                onLoad={() => setImgError(false)}
               />
             )}
 

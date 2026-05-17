@@ -25,6 +25,7 @@ import {
   Person,
   Logout,
   Notifications,
+  NotificationsActive,
   Circle,
   Inventory,
   Campaign,
@@ -38,24 +39,28 @@ import { useNotifications } from '@/contexts/NotificationContext';
 const IS_DEMO = import.meta.env.VITE_DEMO_MODE === 'true';
 
 const pageTitles = {
-  '/dashboard': 'Dashboard',
-  '/pos': 'Point of Sale',
-  '/orders': 'Orders',
-  '/menu': 'Menu Management',
-  '/employees': 'Employees',
-  '/users': 'User Management',
-  '/reports': 'Reports',
-  '/deliveries': 'Deliveries',
-  '/operations': 'Operations',
-  '/profile': 'My Profile',
+  '/dashboard':           'Dashboard',
+  '/pos':                 'Point of Sale',
+  '/sales':               'Sales Management',
+  '/products':            'Product Catalog',
+  '/inventory':           'Inventory Management',
+  '/accounts-receivable': 'Accounts Receivable',
+  '/medical-reps':        'Medical Representatives',
+  '/logistics':           'Logistics & Deliveries',
+  '/expenses':            'Expenses',
+  '/reports':             'Reports',
+  '/users':               'User Management',
+  '/operations':          'Operations',
+  '/profile':             'My Profile',
+  '/settings':            'Settings',
 };
 
 const TopBar = ({ drawerWidth, onMenuClick }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, isManagerOrAdmin } = useAuth();
-  const { lowStockItems, lowStockCount, systemAlerts, announcements, hasUnread, markAsRead, totalAlertCount, dismissAlert } = useNotifications();
+  const { user, logout, isManagement } = useAuth();
+  const { lowStockItems, lowStockCount, systemAlerts, announcements, hasUnread, markAsRead, totalAlertCount, dismissAlert, userNotifications, markNotificationRead, markAllNotificationsRead } = useNotifications();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -63,8 +68,8 @@ const TopBar = ({ drawerWidth, onMenuClick }) => {
   const [notifTab, setNotifTab] = useState(0);
 
   const pageTitle = pageTitles[location.pathname] || 'Dashboard';
-  const showStockAlerts = isManagerOrAdmin?.();
-  const badgeCount = showStockAlerts ? totalAlertCount : 0;
+  const showStockAlerts = isManagement?.();
+  const badgeCount = (showStockAlerts ? (totalAlertCount - userNotifications.length) : 0) + userNotifications.length;
 
   const handleProfileMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleProfileMenuClose = () => setAnchorEl(null);
@@ -182,13 +187,14 @@ const TopBar = ({ drawerWidth, onMenuClick }) => {
           <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
             Notification Center
           </Typography>
-          <Chip label={totalAlertCount} size="small" color="error" sx={{ height: 20, fontSize: '0.7rem' }} />
+          <Chip label={badgeCount} size="small" color="error" sx={{ height: 20, fontSize: '0.7rem' }} />
         </Box>
         <Divider />
         <Tabs value={notifTab} onChange={(_, v) => setNotifTab(v)} variant="fullWidth" sx={{ minHeight: 36 }}>
           <Tab label={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}><Inventory sx={{ fontSize: 16 }} /> Stock ({lowStockCount})</Box>} sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }} />
           <Tab label={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}><Info sx={{ fontSize: 16 }} /> System ({systemAlerts.length})</Box>} sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }} />
           <Tab label={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}><Campaign sx={{ fontSize: 16 }} /> News ({announcements.length})</Box>} sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }} />
+          <Tab label={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}><NotificationsActive sx={{ fontSize: 16 }} /> Alerts {userNotifications.length > 0 && <Chip label={userNotifications.length} size="small" color="error" sx={{ height: 16, fontSize: '0.65rem', ml: 0.3 }} />}</Box>} sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }} />
         </Tabs>
         <Divider />
         <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
@@ -259,6 +265,34 @@ const TopBar = ({ drawerWidth, onMenuClick }) => {
             ) : (
               <Box sx={{ px: 2, py: 3, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">No announcements</Typography>
+              </Box>
+            )
+          )}
+          {/* My Alerts Tab */}
+          {notifTab === 3 && (
+            userNotifications.length > 0 ? (
+              <>
+                <Box sx={{ px: 2, py: 0.5, display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button size="small" onClick={markAllNotificationsRead}>Mark all as read</Button>
+                </Box>
+                {userNotifications.map((n) => (
+                  <MenuItem key={n.id} sx={{ py: 1, gap: 1, alignItems: 'flex-start' }}>
+                    <NotificationsActive sx={{ fontSize: 18, color: 'error.main', mt: 0.3, flexShrink: 0 }} />
+                    <ListItemText
+                      primary={n.title}
+                      secondary={n.message}
+                      primaryTypographyProps={{ variant: 'body2', fontWeight: 600, color: 'error.main' }}
+                      secondaryTypographyProps={{ variant: 'caption', sx: { whiteSpace: 'normal' } }}
+                    />
+                    <IconButton size="small" onClick={() => markNotificationRead(n.id)}>
+                      <Close fontSize="small" />
+                    </IconButton>
+                  </MenuItem>
+                ))}
+              </>
+            ) : (
+              <Box sx={{ px: 2, py: 3, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">No new alerts</Typography>
               </Box>
             )
           )}

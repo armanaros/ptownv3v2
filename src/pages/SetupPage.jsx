@@ -30,10 +30,11 @@ export default function SetupPage() {
 
   useEffect(() => {
     const check = async () => {
-      const snap = await getDocs(collection(db, COLLECTIONS.USERS));
-      if (!snap.empty) {
-        setHasUsers(true);
-      } else {
+      try {
+        const snap = await getDocs(collection(db, COLLECTIONS.USERS));
+        setHasUsers(!snap.empty);
+      } catch {
+        // Firestore rules may block unauthenticated reads — assume no users exist
         setHasUsers(false);
       }
     };
@@ -75,7 +76,7 @@ export default function SetupPage() {
     setLoading(true);
 
     try {
-      const emailToUse = email.trim() || `${username.trim().toLowerCase()}@ptown.local`;
+      const emailToUse = email.trim() || `${username.trim().toLowerCase()}@therapevo.local`;
       const cred = await createUserWithEmailAndPassword(auth, emailToUse, password);
 
       await setDoc(doc(db, COLLECTIONS.USERS, cred.user.uid), {
@@ -83,7 +84,7 @@ export default function SetupPage() {
         email: emailToUse,
         firstName: firstName.trim(),
         lastName: lastName.trim(),
-        role: 'admin',
+        role: 'super_admin',
         isActive: true,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -104,7 +105,7 @@ export default function SetupPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)',
         p: 2,
       }}
     >
@@ -113,13 +114,13 @@ export default function SetupPage() {
           <Box sx={{ textAlign: 'center', mb: 3 }}>
             <Box
               component="img"
-              src="/logo.png"
-              alt="P-Town"
-              sx={{ width: 180, height: 'auto', mb: 1 }}
+              src="/logo.jpg"
+              alt="Therapevo TIPDMS"
+              sx={{ width: 160, height: 'auto', mb: 1.5 }}
             />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>Initial Setup</Typography>
             <Typography variant="body2" color="text.secondary">
-              Create the first admin account
+              Create the Super Admin account
             </Typography>
           </Box>
 
@@ -176,7 +177,7 @@ export default function SetupPage() {
                 disabled={loading}
                 sx={{ py: 1.5 }}
               >
-                {loading ? 'Creating...' : 'Create Admin Account'}
+                {loading ? 'Creating...' : 'Create Super Admin Account'}
               </Button>
             </Stack>
           </Box>

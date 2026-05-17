@@ -34,7 +34,7 @@ const POSContent = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { user, isEmployee, logout } = useAuth();
+  const { user, isSalesRep, logout } = useAuth();
   const { restaurantId } = useRestaurant();
   const { availableMenu, loading } = useMenu();
   const cart = useCart();
@@ -194,7 +194,7 @@ const POSContent = () => {
             backgroundColor: 'background.paper',
           }}
         >
-          {isEmployee() ? (
+          {isSalesRep() ? (
             <IconButton onClick={async () => { await logout(); navigate('/login'); }} size="small" title="Logout">
               <Logout />
             </IconButton>

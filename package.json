@@ -1,6 +1,6 @@
 {
-  "name": "ptown-pos",
-  "version": "2.0.0",
+  "name": "tipdms",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,7 +15,7 @@
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
     "@mui/x-date-pickers": "^7.25.0",
-    "date-fns": "^4.1.0",
+    "date-fns": "^3.6.0",
     "file-saver": "^2.0.5",
     "firebase": "^11.3.0",
     "qrcode.react": "^4.2.0",

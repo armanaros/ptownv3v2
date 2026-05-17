@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Grid2 as Grid,
@@ -9,6 +10,9 @@ import {
   MenuItem,
   LinearProgress,
   Chip,
+  Alert,
+  AlertTitle,
+  Stack,
   alpha,
   useTheme,
   IconButton,
@@ -27,6 +31,7 @@ import {
   TrendingUp,
   Cancel,
   Settings,
+  Schedule,
 } from '@mui/icons-material';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -40,6 +45,7 @@ import { useRestaurant } from '@/hooks/useRestaurant';
 import { getReportData } from '@/services/report.service';
 import { formatCurrency } from '@/utils/formatters';
 import { getManilaDayRange } from '@/utils/dateHelpers';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 const CHART_COLORS = {
   primary: '#667eea',
@@ -168,6 +174,8 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { restaurantId } = useRestaurant();
   const { items, loading: menuLoading } = useMenu();
+  const { upcomingInstallments = [] } = useNotifications();
+  const navigate = useNavigate();
 
   const [range, setRange] = useState('1');
   const [reportData, setReportData] = useState(null);
@@ -286,6 +294,72 @@ export default function DashboardPage() {
             </TextField>
           </Box>
         </Box>
+
+        {/* Upcoming installment payment alerts */}
+        {upcomingInstallments.length > 0 && (
+          <Card elevation={0} sx={{ border: '1px solid', borderColor: 'warning.light', borderRadius: 2, mb: 3, overflow: 'hidden' }}>
+            <Box sx={{ px: 2, py: 1.5, bgcolor: 'warning.50', borderBottom: '1px solid', borderColor: 'warning.light', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Schedule sx={{ color: 'warning.main', fontSize: 20 }} />
+              <Typography variant="subtitle2" fontWeight={700} color="warning.dark">
+                {upcomingInstallments.length} Upcoming Installment Payment{upcomingInstallments.length > 1 ? 's' : ''}
+              </Typography>
+              <Chip label="Due within 5 days" size="small" color="warning" sx={{ ml: 'auto', height: 20, fontSize: '0.7rem' }} />
+            </Box>
+            <Stack divider={<Box sx={{ borderBottom: '1px solid', borderColor: 'divider' }} />}>
+              {upcomingInstallments.map((r) => {
+                const amountPaid = r.amountPaid || 0;
+                const instAmt = r.installmentAmount || 0;
+                const ip = instAmt > 0 ? Math.floor(amountPaid / instAmt) : 0;
+                const firstDue = r.firstInstallmentDue;
+                const freq = r.installmentFrequency || 'monthly';
+                const nd = (() => {
+                  if (!firstDue) return null;
+                  const d = firstDue?.toDate ? firstDue.toDate() : new Date(firstDue);
+                  const res = new Date(d);
+                  if (freq === 'weekly') res.setDate(res.getDate() + ip * 7);
+                  else if (freq === 'bi_monthly') res.setDate(res.getDate() + ip * 14);
+                  else res.setMonth(res.getMonth() + ip);
+                  return res;
+                })();
+                const daysUntil = nd ? Math.ceil((nd - new Date()) / 86400000) : null;
+                const pct = r.installmentTotal > 0 ? Math.min(100, (ip / r.installmentTotal) * 100) : 0;
+                return (
+                  <Box
+                    key={r.id}
+                    onClick={() => navigate(`/accounts-receivable?highlight=${r.id}`)}
+                    sx={{ px: 2, py: 1.5, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap', cursor: 'pointer', '&:hover': { bgcolor: 'warning.50' } }}
+                  >
+                    <Box sx={{ flex: 1, minWidth: 160 }}>
+                      <Typography variant="body2" fontWeight={700}>{r.customerName}</Typography>
+                      {r.invoiceNumber && (
+                        <Typography variant="caption" color="text.secondary">Invoice #{r.invoiceNumber}</Typography>
+                      )}
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 120 }}>
+                      <Typography variant="caption" color="text.secondary">Progress</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <LinearProgress variant="determinate" value={pct}
+                          sx={{ flex: 1, height: 6, borderRadius: 3 }}
+                          color={pct >= 100 ? 'success' : 'warning'} />
+                        <Typography variant="caption" fontWeight={700}>{ip}/{r.installmentTotal}</Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography variant="body2" fontWeight={700} color="warning.dark">
+                        {formatCurrency(instAmt)}
+                      </Typography>
+                      <Typography variant="caption"
+                        color={daysUntil != null && daysUntil <= 0 ? 'error.main' : 'warning.main'}>
+                        {nd ? nd.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }) : ''}
+                        {daysUntil != null && (daysUntil <= 0 ? ' — OVERDUE' : daysUntil === 0 ? ' — TODAY' : ` — in ${daysUntil}d`)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Stack>
+          </Card>
+        )}
 
         {/* Metric cards */}
         {widgets.metrics && (

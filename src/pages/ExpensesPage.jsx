@@ -30,21 +30,25 @@ import { formatCurrency } from '@/utils/formatters';
 import useAuth from '@/hooks/useAuth';
 
 const EXPENSE_CATEGORIES = [
-  { value: 'ingredients', label: 'Ingredients' },
-  { value: 'supplies', label: 'Supplies' },
-  { value: 'utilities', label: 'Utilities' },
-  { value: 'salary', label: 'Salary/Wages' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'other', label: 'Other' },
+  { value: 'procurement',  label: 'Procurement' },
+  { value: 'logistics',    label: 'Logistics' },
+  { value: 'salaries',     label: 'Salaries & Wages' },
+  { value: 'utilities',    label: 'Utilities' },
+  { value: 'admin',        label: 'Administrative' },
+  { value: 'marketing',    label: 'Marketing' },
+  { value: 'maintenance',  label: 'Maintenance' },
+  { value: 'other',        label: 'Other' },
 ];
 
 const CATEGORY_COLORS = {
-  ingredients: 'success',
-  supplies: 'info',
-  utilities: 'warning',
-  salary: 'secondary',
+  procurement: 'primary',
+  logistics:   'info',
+  salaries:    'secondary',
+  utilities:   'warning',
+  admin:       'default',
+  marketing:   'success',
   maintenance: 'error',
-  other: 'default',
+  other:       'default',
 };
 
 export default function ExpensesPage() {
@@ -52,7 +56,7 @@ export default function ExpensesPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ description: '', amount: '', category: 'ingredients' });
+  const [form, setForm] = useState({ description: '', amount: '', category: 'procurement' });
 
   const loadExpenses = async () => {
     setLoading(true);

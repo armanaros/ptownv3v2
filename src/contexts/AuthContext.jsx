@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
             setUser({ ...profile, uid: firebaseUser.uid });
           } else {
             logger.warn('No profile found for user:', firebaseUser.uid);
-            setUser({ uid: firebaseUser.uid, email: firebaseUser.email, role: 'employee' });
+            setUser({ uid: firebaseUser.uid, email: firebaseUser.email, role: 'sales_rep' });
           }
         } catch (err) {
           logger.error('Error loading user profile:', err);
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (usernameOrEmail, password) => {
     const firebaseUser = await authService.signIn(usernameOrEmail, password);
     const profile = await userService.getUserById(firebaseUser.uid);
-    const fullUser = profile ? { ...profile, uid: firebaseUser.uid } : { uid: firebaseUser.uid, email: firebaseUser.email, role: 'employee' };
+    const fullUser = profile ? { ...profile, uid: firebaseUser.uid } : { uid: firebaseUser.uid, email: firebaseUser.email, role: 'sales_rep' };
     setUser(fullUser);
     logActivity({ type: 'AUTH', action: 'LOGIN', userId: firebaseUser.uid, details: `${fullUser.firstName || ''} logged in` });
     return fullUser;
@@ -66,19 +66,40 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     updateProfile,
-    isAdmin: () => permissions.isAdmin(user),
-    isManager: () => permissions.isManager(user),
-    isEmployee: () => permissions.isEmployee(user),
-    isDelivery: () => permissions.isDelivery(user),
-    isManagerOrAdmin: () => permissions.isManagerOrAdmin(user),
-    canAccessReports: () => permissions.canAccessReports(user),
-    canManageUsers: () => permissions.canManageUsers(user),
-    canManageMenu: () => permissions.canManageMenu(user),
-    canProcessOrders: () => permissions.canProcessOrders(user),
-    canViewMenu: () => permissions.canViewMenu(user),
-    canViewDeliveries: () => permissions.canViewDeliveries(user),
-    canManageExpenses: () => permissions.canManageExpenses(user),
-    canManageOperations: () => permissions.canManageOperations(user),
+    // ─── Role checkers ───────────────────────────────────────────────
+    isSuperAdmin:    () => permissions.isSuperAdmin(user),
+    isCEO:           () => permissions.isCEO(user),
+    isAdmin:         () => permissions.isAdmin(user),
+    isAccounting:    () => permissions.isAccounting(user),
+    isPharmacy:      () => permissions.isPharmacy(user),
+    isSalesRep:      () => permissions.isSalesRep(user),
+    isLogistics:     () => permissions.isLogistics(user),
+    isManagement:    () => permissions.isManagement(user),
+    // ─── Module permission checkers ──────────────────────────────────
+    canAccessDashboard:      () => permissions.canAccessDashboard(user),
+    canAccessCEODashboard:   () => permissions.canAccessCEODashboard(user),
+    canAccessSales:          () => permissions.canAccessSales(user),
+    canManageSales:          () => permissions.canManageSales(user),
+    canApproveSales:         () => permissions.canApproveSales(user),
+    canAccessProducts:       () => permissions.canAccessProducts(user),
+    canManageProducts:       () => permissions.canManageProducts(user),
+    canAccessInventory:      () => permissions.canAccessInventory(user),
+    canManageInventory:      () => permissions.canManageInventory(user),
+    canAccessAR:             () => permissions.canAccessAR(user),
+    canManageAR:             () => permissions.canManageAR(user),
+    canAccessMedReps:        () => permissions.canAccessMedReps(user),
+    canManageMedReps:        () => permissions.canManageMedReps(user),
+    canAccessPOS:            () => permissions.canAccessPOS(user),
+    canAccessLogistics:      () => permissions.canAccessLogistics(user),
+    canManageLogistics:      () => permissions.canManageLogistics(user),
+    canAccessExpenses:       () => permissions.canAccessExpenses(user),
+    canManageExpenses:       () => permissions.canManageExpenses(user),
+    canAccessReports:        () => permissions.canAccessReports(user),
+    canManageUsers:          () => permissions.canManageUsers(user),
+    canManageOperations:     () => permissions.canManageOperations(user),
+    canManageSettings:       () => permissions.canManageSettings(user),
+    canAccessPurchaseOrders: () => permissions.canAccessPurchaseOrders(user),
+    canManagePurchaseOrders: () => permissions.canManagePurchaseOrders(user),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

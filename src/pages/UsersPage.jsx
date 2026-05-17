@@ -16,11 +16,27 @@ import { subscribeToUsers, createUser, updateUser, deleteUser } from '@/services
 import { ROLES } from '@/config/constants';
 
 const ROLE_COLORS = {
-  admin: 'error', manager: 'warning', employee: 'primary', delivery: 'secondary',
+  super_admin: 'error',
+  ceo:         'secondary',
+  admin:       'warning',
+  accounting:  'info',
+  pharmacy:    'success',
+  sales_rep:   'primary',
+  logistics:   'default',
+};
+
+const ROLE_LABELS = {
+  super_admin: 'Super Admin',
+  ceo:         'CEO',
+  admin:       'Administrative',
+  accounting:  'Accounting',
+  pharmacy:    'Pharmacy',
+  sales_rep:   'Sales Rep / Distributor',
+  logistics:   'Logistics',
 };
 
 const EMPTY_CREATE = {
-  username: '', email: '', password: '', firstName: '', lastName: '', role: 'employee', phone: '',
+  username: '', email: '', password: '', firstName: '', lastName: '', role: 'sales_rep', phone: '',
 };
 
 export default function UsersPage() {
@@ -84,7 +100,7 @@ export default function UsersPage() {
       firstName: u.firstName || '',
       lastName:  u.lastName  || '',
       phone:     u.phone     || '',
-      role:      u.role      || 'employee',
+      role:      u.role      || 'sales_rep',
     });
   };
 
@@ -188,10 +204,9 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={u.role}
+                        label={ROLE_LABELS[u.role] || u.role}
                         size="small"
                         color={ROLE_COLORS[u.role] || 'default'}
-                        sx={{ textTransform: 'capitalize' }}
                       />
                     </TableCell>
                     <TableCell>
@@ -269,7 +284,7 @@ export default function UsersPage() {
                 onChange={(e) => setCreateForm({ ...createForm, role: e.target.value })}
                 fullWidth>
                 {Object.values(ROLES).map((r) => (
-                  <MenuItem key={r} value={r} sx={{ textTransform: 'capitalize' }}>{r}</MenuItem>
+                  <MenuItem key={r} value={r}>{ROLE_LABELS[r] || r}</MenuItem>
                 ))}
               </TextField>
             </Stack>
@@ -305,7 +320,7 @@ export default function UsersPage() {
                 onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
                 fullWidth>
                 {Object.values(ROLES).map((r) => (
-                  <MenuItem key={r} value={r} sx={{ textTransform: 'capitalize' }}>{r}</MenuItem>
+                  <MenuItem key={r} value={r}>{ROLE_LABELS[r] || r}</MenuItem>
                 ))}
               </TextField>
             </Stack>
